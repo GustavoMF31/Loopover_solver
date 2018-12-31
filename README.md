@@ -4,7 +4,7 @@ Solver for https://www.openprocessing.org/sketch/580366
 
 Requirements:
 
-Python3 and xdotool on Ubuntu (or probably other Linux distros).
+Python3 and pyautogui (`pip install pyautogui`).
 
 ## Usage:
 
