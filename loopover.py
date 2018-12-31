@@ -1,4 +1,4 @@
-import xdotool
+import pyautogui
 import time
 from collections import Counter
 
@@ -43,12 +43,12 @@ class Board:
 			right_dist = (x%w - self.x%w) % w
 			if left_dist < right_dist:
 				for i in range(left_dist):
-					concurrent and xdotool.key('j')
+					concurrent and pyautogui.press('j')
 					self.keys += 'j'
 					sleep()
 			else:
 				for i in range(right_dist):
-					concurrent and xdotool.key('l')
+					concurrent and pyautogui.press('l')
 					self.keys += 'l'
 					sleep()
 			self.x = x % self.width
@@ -58,16 +58,17 @@ class Board:
 			down_dist = (y%h - self.y%h) % h
 			if up_dist < down_dist:
 				for i in range(up_dist):
-					concurrent and xdotool.key('i')
+					concurrent and pyautogui.press('i')
 					self.keys += 'i'
 					sleep()
 			else:
 				for i in range(down_dist):
-					concurrent and xdotool.key('k')
+					concurrent and pyautogui.press('k')
 					self.keys += 'k'
 					sleep()
 			self.y = y % self.width
 	def swipe_up(self, col, dist):
+		#print(f'Swipe up col {col} {dist} times')
 		self.move(col, None)
 		col = self.x # allow None argument for col
 		dist %= self.height
@@ -79,17 +80,18 @@ class Board:
 			pass
 		elif dist < (-dist) % self.height:
 			for i in range(dist):
-				concurrent and xdotool.key("w")
+				concurrent and pyautogui.press("w")
 				self.y = self.y-1 % self.height
 				self.keys += 'w'
 				sleep()
 		else:
 			for i in range(self.height - dist):
-				concurrent and xdotool.key("s")
+				concurrent and pyautogui.press("s")
 				self.y = self.y+1 % self.height
 				self.keys += 's'
 				sleep()
 	def swipe_left(self, row, dist):
+		#print(f'Swipe left row {row} {dist} times')
 		self.move(None, row)
 		row = self.y # allow None argument for row
 		dist %= self.height
@@ -99,13 +101,13 @@ class Board:
 			pass
 		elif dist < (-dist) % self.width:
 			for i in range(dist):
-				concurrent and xdotool.key("a")
+				concurrent and pyautogui.press("a")
 				self.x = self.x-1 % self.width
 				self.keys += 'a'
 				sleep()
 		else:
 			for i in range(self.width - dist):
-				concurrent and xdotool.key("d")
+				concurrent and pyautogui.press("d")
 				self.x = self.x+1 % self.width
 				self.keys += 'd'
 				sleep()
@@ -130,9 +132,9 @@ class Board:
 			'i':lambda: self.move(None, self.y+1)
 		}
 		for key in self.keys[::-1]:
-			#xdotool.key(opposite[key])
+			#pyautogui.typewrite(opposite[key])
 			opposite[key]()
-		concurrent or xdotool.type(self.keys)
+		concurrent or pyautogui.typewrite(self.keys)
 		self.typed += self.keys
 		self.keys = ""
 	def solved(self, width=None, height=None):
@@ -202,7 +204,7 @@ class Board:
 			#print('1 is at', x, y)
 			self.swipe_up(x, y)
 			self.swipe_left(0, x)
-		concurrent and xdotool.key("space") # for grouping, doesnt affect game
+		concurrent and pyautogui.press("space") # for grouping, doesnt affect game
 		self.keys += ' '
 		sleep()
 	def solve_lastcol(self): # leaves keyhole
@@ -293,8 +295,7 @@ class Board:
 		self.solve_keyhole()
 		if not self.solved() and not self.width % 2:
 			self.solve_parity()
-		concurrent or xdotool.type(optimize_solution(self.keys, self.width, self.height))
-#		concurrent or xdotool.type(self.keys)
+		concurrent or pyautogui.typewrite(optimize_solution(self.keys, self.width, self.height))
 		self.typed += self.keys
 		self.keys = ""
 def optimize_solution(_s, width, height):
